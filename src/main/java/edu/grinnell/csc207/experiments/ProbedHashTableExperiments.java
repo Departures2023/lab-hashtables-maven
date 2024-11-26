@@ -44,9 +44,20 @@ public class ProbedHashTableExperiments {
     // Conduct some of the experiments
     // HashTableExperiments.matchingKeysExpt(pen, htab);
     // HashTableExperiments.repeatedSetExpt(pen, htab);
+    // htab.reportBasicCalls(true);
+    // htab.set("alpha", "alpha");
+    // htab.dump(pen);
+    // htab.set("beta", "beta");
+    // htab.dump(pen);
+    // htab.set("bravo", "bravo");
+    // htab.dump(pen);
+    // htab.set("beta", "max");
+    // htab.dump(pen);
+    // htab.reportBasicCalls(false);
+    // pen.println();
     // HashTableExperiments.matchingSetExpt(pen, htab);
     // HashTableExperiments.multipleSetExpt(pen, htab);
-    // HashTableExperiments.removeExpt(pen, htab);
+    HashTableExperiments.removeExpt(pen, htab);
   } // main(String[])
 
 } // class ProbedHashTableExperiments

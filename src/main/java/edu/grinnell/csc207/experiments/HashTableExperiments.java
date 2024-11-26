@@ -148,7 +148,15 @@ public class HashTableExperiments {
    */
   public static void removeExpt(PrintWriter pen,
       HashTable<String, String> htab) {
-    // STUB
+    for (int i = 0; i < 9;  i++) {
+      htab.set(words[i], words[i]);
+    }
+
+    for (int i = 9; i > 0; i--) {
+      htab.remove(words[i]);
+    }
+
+    htab.dump(pen);
   } // removeExpt(PrintWriter, HashTable)
 
 } // class HashTableExperiments

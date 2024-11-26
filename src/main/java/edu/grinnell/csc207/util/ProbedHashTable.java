@@ -8,8 +8,9 @@ import java.util.function.BiConsumer;
 /**
  * A simple implementation of probed hash tables.
  *
- * @author Your Name Here
- * @author Your Name Here
+ * @author Kevin Tang
+ * @author Leo Goldman
+ * @author Anthony Castleberry
  * @author Samuel A. Rebelsky
  *
  * @param <K>
@@ -186,6 +187,9 @@ public class ProbedHashTable<K, V> implements HashTable<K, V> {
     int index = find(key);
     @SuppressWarnings("unchecked")
     Pair<K, V> pair = (Pair<K, V>) pairs[index];
+    if (!key.equals(((Pair) pairs[index]).key())) {
+      throw new IndexOutOfBoundsException();
+    }
     if (pair == null) {
       if (REPORT_BASIC_CALLS && (reporter != null)) {
         reporter.report("get(" + key + ") failed");
@@ -220,8 +224,10 @@ public class ProbedHashTable<K, V> implements HashTable<K, V> {
    */
   @Override
   public V remove(K key) {
-    // STUB
-    return null;
+    int index = find(key);
+    V placeHolder = ((V) ((Pair) this.pairs[index]).value());
+    this.pairs[index] = new Pair(null, null);
+    return placeHolder;
   } // remove(K)
 
   /**
@@ -238,7 +244,13 @@ public class ProbedHashTable<K, V> implements HashTable<K, V> {
   public V set(K key, V value) {
     V result = null;
     // If there are too many entries, expand the table.
-    if (this.size > (this.pairs.length * LOAD_FACTOR)) {
+    int count = 0;
+    for (int i = 0; i < this.pairs.length; i++) {
+      if (pairs[i] != null) {
+        count++;
+      }
+    }
+    if (count > (this.pairs.length * LOAD_FACTOR)) {
       expand();
     } // if there are too many entries
     // Find out where the key belongs and put the pair there.
@@ -251,8 +263,6 @@ public class ProbedHashTable<K, V> implements HashTable<K, V> {
     if (REPORT_BASIC_CALLS && (reporter != null)) {
       reporter.report("pairs[" + index + "] = " + key + ":" + value);
     } // if reporter != null
-    // Note that we've incremented the size.
-    ++this.size;
     // And we're done
     return result;
   } // set(K, V)
@@ -309,7 +319,7 @@ public class ProbedHashTable<K, V> implements HashTable<K, V> {
    */
   @Override
   public void clear() {
-    this.pairs = new Object[41];
+    this.pairs = new Object[10];
     this.size = 0;
   } // clear()
 
@@ -368,8 +378,11 @@ public class ProbedHashTable<K, V> implements HashTable<K, V> {
     Object[] newPairs = new Object[newSize];
     // Move all pairs from the old table to their appropriate
     // location in the new table.
-    // STUB
+    for (int i = 0; i < this.pairs.length; i++) {
+      newPairs[i] = this.pairs[i];
+    } // for
     // And update our pairs
+    this.pairs = newPairs;
   } // expand()
 
   /**
@@ -382,7 +395,11 @@ public class ProbedHashTable<K, V> implements HashTable<K, V> {
    * @return the aforementioned index.
    */
   int find(K key) {
-    return Math.abs(key.hashCode()) % this.pairs.length;
+    int index = Math.abs(key.hashCode()) % this.pairs.length;
+    while (pairs[index] != null && !((Pair) pairs[index]).key().equals(key)) {
+      index = (index + PROBE_OFFSET) % this.pairs.length;
+    }
+    return index;
   } // find(K)
 
 } // class ProbedHashTable<K, V>
